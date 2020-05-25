@@ -1,0 +1,6 @@
+name: recipeasy
+channels:
+  - defaults
+dependencies:
+  - pytest
+  - pytest-cov
