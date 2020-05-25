@@ -1,6 +1,7 @@
 name: recipeasy
-channels:
-  - defaults
 dependencies:
-  - pytest
-  - pytest-cov
+  - python=3.8
+  - pip
+  - pip:
+    - -r test_requirements.txt
+    - pytest-pycharm
