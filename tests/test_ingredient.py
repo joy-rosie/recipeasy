@@ -1,6 +1,6 @@
-from recipeasy import ingredient
+from recipeasy.models.ingredient import Ingredient
 
 
 def test_Ingredient_init():
-    ing = ingredient.Ingredient(name='test')
-    assert isinstance(ing, ingredient.Ingredient) and ing.name == 'test'
+    ing = Ingredient(id='1', name='test')
+    assert isinstance(ing, Ingredient) and ing.name == 'test'
