@@ -10,10 +10,10 @@ class Ingredient:
     name: str
 
     @staticmethod
-    def fromJson(json) -> Ingredient:
+    def from_json(json) -> Ingredient:
         if "name" not in json:
             raise ValidationException("Ingredient name must be provided")
         return Ingredient(
-            id = json["id"] if "id" in json else "",
-            name = json["name"]
+            id=json["id"] if "id" in json else "",
+            name=json["name"]
         )

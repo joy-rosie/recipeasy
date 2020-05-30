@@ -1,8 +1,9 @@
 from __future__ import annotations
+
 from typing import List
 
 from pynamodb.attributes import UnicodeAttribute, NumberAttribute
-from pynamodb.exceptions import DoesNotExist, DeleteError, UpdateError
+from pynamodb.exceptions import DeleteError
 from pynamodb.expressions.condition import Comparison
 from pynamodb.models import Model
 
@@ -22,16 +23,14 @@ class RecipeIngredientModel(Model):
     ingredient_id = UnicodeAttribute(range_key=True)
     quantity = NumberAttribute(default=0)
 
-    def fromRecipeIngredient(self, recipeIngredient: RecipeIngredient) -> RecipeIngredientModel:
-        self.recipe_id = recipeIngredient.recipe_id
-        self.ingredient_id = recipeIngredient.ingredient_id
-        self.quantity = recipeIngredient.quantity
+    def from_recipe_ingredient(self, recipe_ingredient: RecipeIngredient) -> RecipeIngredientModel:
+        self.recipe_id = recipe_ingredient.recipe_id
+        self.ingredient_id = recipe_ingredient.ingredient_id
+        self.quantity = recipe_ingredient.quantity
         return self
 
-    def toRecipeIngredient(self) -> RecipeIngredient:
+    def to_recipe_ingredient(self) -> RecipeIngredient:
         return RecipeIngredient(recipe_id=self.recipe_id, ingredient_id=self.ingredient_id, quantity=self.quantity)
-
-
 
 
 class RecipeIngredientsRepository:
@@ -40,34 +39,34 @@ class RecipeIngredientsRepository:
         if not RecipeIngredientModel.exists():
             RecipeIngredientModel.create_table(wait=True)
 
-    def upsertIngredientToRecipe(self, recipeIngredient: RecipeIngredient) -> None:
-        RecipeIngredientModel().fromRecipeIngredient(recipeIngredient).save()
+    def upsert_ingredient_to_recipe(self, recipe_ingredient: RecipeIngredient) -> None:
+        RecipeIngredientModel().from_recipe_ingredient(recipe_ingredient).save()
 
-    def getRecipeIngredient(self, recipe_id:str, ingredient_id:str) -> RecipeIngredient:
-        return self.__getRecipeIngredientModelById(recipe_id, ingredient_id).toRecipeIngredient()
+    def get_recipe_ingredient(self, recipe_id: str, ingredient_id: str) -> RecipeIngredient:
+        return self.__get_recipe_ingredient_model_by_id(recipe_id, ingredient_id).to_recipe_ingredient()
 
-    def getRecipeIngredients(self, recipe_id:str) -> List[RecipeIngredient]:
-        return [r.toRecipeIngredient() for r in RecipeIngredientModel.query(hash_key=recipe_id)]
+    def get_recipe_ingredients(self, recipe_id: str) -> List[RecipeIngredient]:
+        return [r.to_recipe_ingredient() for r in RecipeIngredientModel.query(hash_key=recipe_id)]
 
-    def removeIngredientFromRecipe(self, recipe_id:str, ingredient_id:str) -> None:
+    def remove_ingredient_from_recipe(self, recipe_id: str, ingredient_id: str) -> None:
         try:
-            self.__getRecipeIngredientModelById(recipe_id, ingredient_id).delete()
-        except DeleteError as e:
-            raise RepositoryException("Failed to delete recipe ingredient")
+            self.__get_recipe_ingredient_model_by_id(recipe_id, ingredient_id).delete()
+        except DeleteError:
+            raise RepositoryException(f"Failed to delete ingredient {ingredient_id} for recipe {recipe_id}")
 
-    def removeRecipe(self, recipe_id) -> None:
+    def remove_recipe(self, recipe_id) -> None:
         for recipe_ingredient_model in RecipeIngredientModel.query(hash_key=recipe_id):
             try:
                 recipe_ingredient_model.delete()
-            except:
+            except DeleteError:
                 # Ignore error and carry on
                 pass
 
-    def __getRecipeIngredientModelById(self, recipeId:str, ingredientId:str) -> RecipeIngredientModel:
+    def __get_recipe_ingredient_model_by_id(self, recipe_id: str, ingredient_id: str) -> RecipeIngredientModel:
         try:
             return RecipeIngredientModel.query(
-                hash_key=recipeId,
-                range_key_condition=Comparison("=", "ingredient_id", ingredientId)
+                hash_key=recipe_id,
+                range_key_condition=Comparison("=", "ingredient_id", ingredient_id)
             ).next()
-        except StopIteration as e:
-            raise NotFoundException("Ingredient usage not found")
+        except StopIteration:
+            raise NotFoundException(f"Ingredient {ingredient_id} usage not found for recipe {recipe_id}")

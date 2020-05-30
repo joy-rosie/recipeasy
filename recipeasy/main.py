@@ -7,30 +7,18 @@ from recipeasy.exceptions.RepositoryException import RepositoryException
 
 import os
 
-
 app = Flask(__name__)
 app.register_blueprint(ingredients_controller.controller, url_prefix='/ingredient')
 app.register_blueprint(recipes_controller.controller, url_prefix='/recipe')
 
+
 @app.errorhandler(ValidationException)
-def handleBadRequestException(error):
-    response = jsonify(error.to_dict())
-    response.status_code = error.status_code
-    return response
-
 @app.errorhandler(NotFoundException)
-def handleNotFoundException(error):
-    response = jsonify(error.to_dict())
-    response.status_code = error.status_code
-    return response
-
 @app.errorhandler(RepositoryException)
-def handleRepositoryException(error):
+def handle_exception(error):
     response = jsonify(error.to_dict())
     response.status_code = error.status_code
     return response
-
-
 
 
 if __name__ == '__main__':

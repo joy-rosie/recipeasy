@@ -9,5 +9,5 @@ class RecipeDetailsService:
     def __init__(self):
         self.recipe_details_repository = RecipeDetailsRepository()
 
-    def getRecipeDetails(self) -> List[RecipeDetails]:
+    def get_recipe_details(self) -> List[RecipeDetails]:
         return self.recipe_details_repository.get_recipe_details()

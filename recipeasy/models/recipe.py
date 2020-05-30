@@ -12,11 +12,11 @@ class Recipe:
     ingredients: Dict[str, float]
 
     @staticmethod
-    def fromJson(json) -> Recipe:
+    def from_json(json) -> Recipe:
         if "name" not in json:
             raise ValidationException("Recipe name must be provided")
         return Recipe(
-            id = json["id"] if "id" in json else "",
-            name = json["name"],
+            id=json["id"] if "id" in json else "",
+            name=json["name"],
             ingredients=json["ingredients"] if "ingredients" in json else {}
         )

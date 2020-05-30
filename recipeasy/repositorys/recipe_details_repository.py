@@ -21,12 +21,12 @@ class RecipeDetailsModel(Model):
     id = UnicodeAttribute(hash_key=True)
     name = UnicodeAttribute()
 
-    def fromRecipe(self, recipe:RecipeDetails) -> RecipeDetailsModel:
+    def from_recipe(self, recipe: RecipeDetails) -> RecipeDetailsModel:
         self.id = recipe.id
         self.name = recipe.name
         return self
 
-    def toRecipe(self) -> RecipeDetails:
+    def to_recipe(self) -> RecipeDetails:
         return RecipeDetails(id=self.id, name=self.name)
 
 
@@ -36,31 +36,31 @@ class RecipeDetailsRepository:
         if not RecipeDetailsModel.exists():
             RecipeDetailsModel.create_table(wait=True)
 
-    def createRecipeDetail(self, recipe: RecipeDetails) -> None:
-        RecipeDetailsModel().fromRecipe(recipe).save()
+    def create_recipe_detail(self, recipe: RecipeDetails) -> None:
+        RecipeDetailsModel().from_recipe(recipe).save()
 
-    def getRecipeDetailById(self, id: str) -> RecipeDetails:
-        return self.__getRecipeDetailModelById(id).toRecipe()
+    def get_recipe_detail_by_id(self, recipe_id: str) -> RecipeDetails:
+        return self.__get_recipe_detail_model_by_id(recipe_id).to_recipe()
 
     def get_recipe_details(self) -> List[RecipeDetails]:
-        return [i.toRecipe() for i in RecipeDetailsModel.scan()]
+        return [i.to_recipe() for i in RecipeDetailsModel.scan()]
 
-    def updateRecipeDetail(self, recipe: RecipeDetails) -> None:
+    def update_recipe_detail(self, recipe: RecipeDetails) -> None:
         try:
-            self.__getRecipeDetailModelById(recipe.id).update(actions=[
+            self.__get_recipe_detail_model_by_id(recipe.id).update(actions=[
                 RecipeDetailsModel.name.set(recipe.name)
             ])
-        except UpdateError as e:
-            raise RepositoryException("Failed to update recipe")
+        except UpdateError:
+            raise RepositoryException(f"Failed to update recipe {recipe.id}")
 
-    def deleteRecipeDetail(self, id: str) -> None:
+    def delete_recipe_detail(self, recipe_id: str) -> None:
         try:
-            self.__getRecipeDetailModelById(id).delete()
-        except DeleteError as e:
-            raise RepositoryException("Failed to delete recipe")
+            self.__get_recipe_detail_model_by_id(recipe_id).delete()
+        except DeleteError:
+            raise RepositoryException(f"Failed to delete recipe {recipe_id}")
 
-    def __getRecipeDetailModelById(self, id: str) -> RecipeDetailsModel:
+    def __get_recipe_detail_model_by_id(self, recipe_id: str) -> RecipeDetailsModel:
         try:
-            return RecipeDetailsModel.get(id)
-        except DoesNotExist as e:
-            raise NotFoundException("Recipe not found")
+            return RecipeDetailsModel.get(recipe_id)
+        except DoesNotExist:
+            raise NotFoundException(f"Recipe {recipe_id} not found")
