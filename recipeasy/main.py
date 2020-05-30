@@ -1,7 +1,7 @@
 from flask import Flask, jsonify
 
-from recipeasy.controllers import ingredients_controller
-from recipeasy.exceptions.BadRequestException import BadRequestException
+from recipeasy.controllers import ingredients_controller, recipes_controller
+from recipeasy.exceptions.ValidationException import ValidationException
 from recipeasy.exceptions.NotFoundException import NotFoundException
 from recipeasy.exceptions.RepositoryException import RepositoryException
 
@@ -9,10 +9,10 @@ import os
 
 
 app = Flask(__name__)
-app.register_blueprint(ingredients_controller.controller, url_prefix='/ingredients')
-# TODO: recipes controller
+app.register_blueprint(ingredients_controller.controller, url_prefix='/ingredient')
+app.register_blueprint(recipes_controller.controller, url_prefix='/recipe')
 
-@app.errorhandler(BadRequestException)
+@app.errorhandler(ValidationException)
 def handleBadRequestException(error):
     response = jsonify(error.to_dict())
     response.status_code = error.status_code

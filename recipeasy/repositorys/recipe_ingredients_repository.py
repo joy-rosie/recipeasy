@@ -36,7 +36,11 @@ class RecipeIngredientModel(Model):
 
 class RecipeIngredientsRepository:
 
-    def addIngredientToRecipe(self, recipeIngredient: RecipeIngredient) -> None:
+    def __init__(self):
+        if not RecipeIngredientModel.exists():
+            RecipeIngredientModel.create_table(wait=True)
+
+    def upsertIngredientToRecipe(self, recipeIngredient: RecipeIngredient) -> None:
         RecipeIngredientModel().fromRecipeIngredient(recipeIngredient).save()
 
     def getRecipeIngredient(self, recipe_id:str, ingredient_id:str) -> RecipeIngredient:
@@ -45,17 +49,9 @@ class RecipeIngredientsRepository:
     def getRecipeIngredients(self, recipe_id:str) -> List[RecipeIngredient]:
         return [r.toRecipeIngredient() for r in RecipeIngredientModel.query(hash_key=recipe_id)]
 
-    def updateRecipeIngredient(self, recipeIngredient: RecipeIngredient) -> None:
+    def removeIngredientFromRecipe(self, recipe_id:str, ingredient_id:str) -> None:
         try:
-            self.__getRecipeIngredientModelById(recipeIngredient.recipe_id, recipeIngredient.ingredient_id).update(actions=[
-                RecipeIngredientModel.quantity.set(recipeIngredient.quantity)
-            ])
-        except UpdateError as e:
-            raise RepositoryException("Failed to update recipe ingredient")
-
-    def removeIngredientFromRecipe(self, recipeIngredient: RecipeIngredient) -> None:
-        try:
-            self.__getRecipeIngredientModelById(recipeIngredient.recipe_id, recipeIngredient.ingredient_id).delete()
+            self.__getRecipeIngredientModelById(recipe_id, ingredient_id).delete()
         except DeleteError as e:
             raise RepositoryException("Failed to delete recipe ingredient")
 

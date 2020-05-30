@@ -1,19 +1,40 @@
-from flask import Blueprint
-from recipeasy.services.recipes_service import RecipesService
+from flask import Blueprint, jsonify, request
 
+from recipeasy.models.recipe import Recipe
+from recipeasy.services.ingredients_service import IngredientsService
+from recipeasy.services.recipe_service import RecipeService
 
-recipes_service: RecipesService = None
-
-def setRecipesService(recipesService: RecipesService) -> None:
-    global recipes_service
-    recipes_service = recipesService
+recipes_service = RecipeService()
+ingredients_service = IngredientsService()
 
 controller = Blueprint('recipes_controller', __name__)
 
 
 @controller.route('/<recipe_id>', methods=['GET'])
 def getRecipe(recipe_id: str):
-    return recipes_service.getRecipeById(recipe_id)
+    return jsonify(
+        recipes_service.getRecipeById(recipe_id)
+    )
+
+@controller.route('', methods=['POST'])
+def createRecipe():
+    return jsonify(
+        recipes_service.createRecipe(Recipe.fromJson(request.json))
+    )
+
+@controller.route('', methods=['PUT'])
+def updateRecipe():
+    return jsonify(
+        recipes_service.updateRecipe(Recipe.fromJson(request.json))
+    )
+
+
+@controller.route('/<recipe_id>', methods=['DELETE'])
+def deleteRecipe(recipe_id:str):
+    recipes_service.deleteRecipeDetails(recipe_id)
+    return jsonify(
+        success=True
+    )
 
 # TODO
 

@@ -1,4 +1,4 @@
-class BadRequestException(Exception):
+class ValidationException(Exception):
     status_code = 400
 
     def __init__(self, message, payload=None):
