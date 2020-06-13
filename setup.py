@@ -13,8 +13,6 @@ setup(
     url='https://github.com/joy-rosie/recipeasy',
     packages=find_packages(),
     install_requires=[
-        'flask',
-        'pynamodb'
     ],
     python_requires='>=3.7',
     classifiers=[
