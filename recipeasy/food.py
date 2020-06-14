@@ -1,6 +1,6 @@
 from __future__ import annotations
-from typing import Union, FrozenSet
-from dataclasses import dataclass
+from typing import FrozenSet
+from dataclasses import dataclass, field
 
 
 @dataclass(frozen=True)
@@ -12,7 +12,7 @@ class FoodState:
 class FoodElement:
     name: str
     state: FoodState = FoodState()
-    previous: FoodElement = None
+    previous: FoodElement = field(default=None, repr=False)
 
     def change_state(self, new_state: FoodState):
         return FoodElement(name=self.name, state=new_state, previous=self)
@@ -21,7 +21,7 @@ class FoodElement:
 @dataclass(frozen=True)
 class Food:
     elements: FrozenSet[FoodElement]
-    previous: FrozenSet[Food] = None
+    previous: FrozenSet[Food] = field(default=None, repr=False)
 
     def change_state(self, new_state: FoodState):
         return Food(
