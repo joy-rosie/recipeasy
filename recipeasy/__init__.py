@@ -1,3 +1,1 @@
-from . import food
-from . import data
-from . import foodLink
+from . import food, data, foodLink
