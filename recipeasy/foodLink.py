@@ -63,7 +63,7 @@ def getIngredient(string):
 
 
 
-listOfNonRelevantWords = ['pot','tsp','tbsp','mini','small','large','seeded','lean','bunch','handful','piece','bag','g','gram','kg','kilogram','glas','glass','frozen','and','plain','mix','mixed','cup','cups','chip','sprouting']
+listOfNonRelevantWords = ['of', 'pot','tsp','tbsp','mini','small','large','seeded','lean','bunch','handful','piece','bag','g','gram','kg','kilogram','glas','glass','frozen','and','plain','mix','mixed','cup','cups','chip','sprouting']
 listOfPowderIdentifiers = ['tsp','tbsp','g','gram','ground','powdered','dried']
 matchingScoreMod_x0pt3 = ['ground','dried','clove','smoked','red']
 
