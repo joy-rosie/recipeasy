@@ -1,6 +1,6 @@
 # import pytest
 
-from recipeasy.data import util as data_util
+import recipeasy.data.util as data_util
 
 
 def test_get_foods():
