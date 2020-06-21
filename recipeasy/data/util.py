@@ -105,10 +105,10 @@ def raw_foods_to_csv(
     for index, item in enumerate(raw_food_data_dump):
         raw_food_data_dump[index]['all_names'] = ', '.join(item['all_names'])
 
-    csv_header = list(raw_food_data[0].keys())
+    csv_header = list(raw_food_data_dump[0].keys())
 
     with open(path, 'w') as f:
         dw = csv.DictWriter(f, delimiter=delimiter, fieldnames=csv_header)
         dw.writerow(dict((fn, fn) for fn in csv_header))
-        for row in raw_food_data:
+        for row in raw_food_data_dump:
             dw.writerow(row)
