@@ -1,5 +1,6 @@
 from typing import Optional, Tuple, Dict, List, NoReturn
-from dataclasses import dataclass, field
+from dataclasses import dataclass
+from itertools import repeat, chain
 import os
 import json
 import csv
@@ -34,7 +35,9 @@ def get_foods(
     for index, item in enumerate(raw_food_data):
         raw_food_data[index]['all_names'] = tuple(item['all_names'])
 
-    food_data = {item['name']: FoodElementWithData(**item) for item in raw_food_data}
+    food_data = {item['all_names']: FoodElementWithData(**item) for item in raw_food_data}
+
+    food_data = {item: value for key, value in food_data.items() for item in key}
 
     return food_data
 
